@@ -12,14 +12,14 @@ namespace KashkeshetClient
         public Client client { get; set; }
         public UserData userData { get; set; }
 
-        public Dictionary<int, UserData> clientsConnected { get; set; }
+
 
         
-        public Menu(Client client1, UserData userData1, Dictionary<int, UserData> clientsConnected1)
+        public Menu(Client client1, UserData userData1)
         {
             client = client1;
             userData = userData1;
-            clientsConnected = clientsConnected1;
+
         }
 
         public void MainMenu()

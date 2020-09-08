@@ -9,15 +9,18 @@ namespace KashkeshetClient
 {
     class Program
     {
-        static Dictionary<int, UserData> clientsConnected = new Dictionary<int, UserData>();
+
         
         static void Main(string[] args)
         {
+
             UserData userData = new UserData();
             Client client = new Client();
-            Menu menu = new Menu(client,userData,clientsConnected);
+            Menu menu = new Menu(client,userData);
             menu.MainMenu();
             
+
+
         }
         
     }
