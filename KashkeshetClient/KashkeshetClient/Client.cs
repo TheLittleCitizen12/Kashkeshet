@@ -27,6 +27,12 @@ namespace KashkeshetClient
             TcpClient client = new TcpClient();
             client.Connect(ip, port);
             Console.WriteLine("Connected To Server, For Exit Please Press Enter");
+<<<<<<< HEAD
+=======
+
+            SendData(client);
+           
+>>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
 
             NetworkStream ns = client.GetStream();
             Thread thread = new Thread(o => ReceiveData((TcpClient)o));

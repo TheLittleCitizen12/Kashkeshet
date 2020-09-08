@@ -17,10 +17,13 @@ namespace KashkeshetServer
 
         static readonly object _lock = new object();
         static readonly Dictionary<int, TcpClient> TcpClients = new Dictionary<int, TcpClient>();
-        static readonly Dictionary<int, UserData> ClientsDetail = new Dictionary<int, UserData>();
+        static readonly Dictionary<string, UserData> ClientsDetail = new Dictionary<string, UserData>();
         public TcpClient client { get; set; }
         public int count { get; set; }
+<<<<<<< HEAD
         
+=======
+>>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
 
         public Server()
         {
@@ -47,6 +50,19 @@ namespace KashkeshetServer
 
         }
 
+<<<<<<< HEAD
+=======
+        public void reciveObject(TcpClient client)
+        {
+
+            NetworkStream strm = client.GetStream();
+            IFormatter formatter = new BinaryFormatter();
+            UserData userDataRecived = (UserData)formatter.Deserialize(strm);
+            lock (_lock) ClientsDetail.Add(userDataRecived.Name, userDataRecived);
+
+        }
+
+>>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
         public void handle_clients(object o)
         {
             int id = (int)o;
@@ -74,7 +90,11 @@ namespace KashkeshetServer
                 }
 
                 string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
+<<<<<<< HEAD
                 broadcast(data);
+=======
+                broadcast(data, client);
+>>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
                 Console.WriteLine(data);
             }
 
@@ -84,7 +104,11 @@ namespace KashkeshetServer
             
         }
 
+<<<<<<< HEAD
         public void broadcast(string data)
+=======
+        public void broadcast(string data, TcpClient client)
+>>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
         {
             byte[] buffer = Encoding.ASCII.GetBytes(data + Environment.NewLine);
 
