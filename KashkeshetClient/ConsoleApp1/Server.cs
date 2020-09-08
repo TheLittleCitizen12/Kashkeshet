@@ -4,6 +4,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,20 +16,38 @@ namespace KashkeshetServer
     {
         static readonly object _lock = new object();
         static readonly Dictionary<int, TcpClient> TcpClients = new Dictionary<int, TcpClient>();
-        static readonly Dictionary<string, Client> ClientsDetail = new Dictionary<string, Client>();
+        static readonly Dictionary<string, UserData> ClientsDetail = new Dictionary<string, UserData>();
+        public TcpClient client { get; set; }
+        public int count { get; set; }
+
+        public Server()
+        {
+            count = 1;
+        }
 
         public void StrartServer()
         {
-            int count = 1;
+
 
             TcpListener ServerSocket = new TcpListener(IPAddress.Any, 11000);
             ServerSocket.Start();
 
+
             while (true)
             {
-                TcpClient client = ServerSocket.AcceptTcpClient();
+
+                client = ServerSocket.AcceptTcpClient();
+                if (!TcpClients.ContainsKey(count))
+                {
+                    Thread threadobject = new Thread(o => reciveObject((TcpClient)o));
+                    threadobject.Start(client);
+                    threadobject.Join();
+
+                }
+
                 lock (_lock) TcpClients.Add(count, client);
                 Console.WriteLine("Someone connected!!");
+
 
                 Thread t = new Thread(handle_clients);
                 t.Start(count);
@@ -36,7 +56,17 @@ namespace KashkeshetServer
 
         }
 
-        public static void handle_clients(object o)
+        public void reciveObject(TcpClient client)
+        {
+
+            NetworkStream strm = client.GetStream();
+            IFormatter formatter = new BinaryFormatter();
+            UserData userDataRecived = (UserData)formatter.Deserialize(strm);
+            lock (_lock) ClientsDetail.Add(userDataRecived.Name, userDataRecived);
+
+        }
+
+        public void handle_clients(object o)
         {
             int id = (int)o;
             TcpClient client;
@@ -55,17 +85,17 @@ namespace KashkeshetServer
                 }
 
                 string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
-                broadcast(data);
+                broadcast(data, client);
                 Console.WriteLine(data);
             }
 
             lock (_lock) TcpClients.Remove(id);
             client.Client.Shutdown(SocketShutdown.Both);
             client.Close();
-            
+
         }
 
-        public static void broadcast(string data)
+        public void broadcast(string data, TcpClient client)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(data + Environment.NewLine);
 
@@ -73,9 +103,13 @@ namespace KashkeshetServer
             {
                 foreach (TcpClient c in TcpClients.Values)
                 {
-                    NetworkStream stream = c.GetStream();
+                    if (client != c)
+                    {
+                        NetworkStream stream = c.GetStream();
 
-                    stream.Write(buffer, 0, buffer.Length);
+                        stream.Write(buffer, 0, buffer.Length);
+                    }
+
                 }
             }
         }
