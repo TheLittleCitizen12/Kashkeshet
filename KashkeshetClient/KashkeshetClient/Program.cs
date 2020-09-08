@@ -20,10 +20,10 @@ namespace KashkeshetClient
 
             thread.Start(client);
 
-            string s;
-            while (!string.IsNullOrEmpty((s = Console.ReadLine())))
+            string Input;
+            while (!string.IsNullOrEmpty(Input= UserInput()))
             {
-                byte[] buffer = Encoding.ASCII.GetBytes(s);
+                byte[] buffer = Encoding.ASCII.GetBytes(Input);
                 ns.Write(buffer, 0, buffer.Length);
             }
 
@@ -34,6 +34,14 @@ namespace KashkeshetClient
             Console.WriteLine("disconnect from server!!");
             Console.ReadKey();
         }
+        static string UserInput()
+        {
+            string userInput;
+            Console.Write("Enter Message: ");
+            userInput = Console.ReadLine();
+            return userInput;
+
+        }
         static void ReceiveData(TcpClient client)
         {
             NetworkStream ns = client.GetStream();
@@ -42,7 +50,7 @@ namespace KashkeshetClient
 
             while ((byte_count = ns.Read(receivedBytes, 0, receivedBytes.Length)) > 0)
             {
-                Console.Write(Encoding.ASCII.GetString(receivedBytes, 0, byte_count));
+                Console.Write("Recived: "+Encoding.ASCII.GetString(receivedBytes, 0, byte_count));
             }
         }
     }
