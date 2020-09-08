@@ -10,6 +10,7 @@ namespace KashkeshetClient
     {
         public string Name { get; set; }
         public int Input { get; set; }
+        public TcpClient socket { get; set; }
         
     }
 }

@@ -14,22 +14,22 @@ namespace KashkeshetClient
     public class Client
     {
         public UserData userData { get; set; }
-        public Client(UserData userData1)
+        public Client()
         {
-            userData = userData1 ;
+            userData = new UserData();
         }
 
-        public TcpClient StartSession()
+        public void StartSession()
         {
             Console.Write("Please enter user name: ");
             userData.Name = Console.ReadLine();
             int port = 11000;
-            TcpClient client = new TcpClient("10.1.0.20",port);
+            TcpClient client = new TcpClient("10.1.0.20", port);
             SendObject(userData, client);
             Console.WriteLine("Connected To Server, For Exit Please Press Enter");
-            return client;
-            
-           
+
+            SendData(client);
+
 
         }
         public void SendObject(UserData userData, TcpClient client)
@@ -77,10 +77,9 @@ namespace KashkeshetClient
 
             while ((byte_count = ns.Read(receivedBytes, 0, receivedBytes.Length)) > 0)
             {
-                Console.Write("\n"+Encoding.ASCII.GetString(receivedBytes, 0, byte_count));
+                Console.Write("\n" + Encoding.ASCII.GetString(receivedBytes, 0, byte_count));
             }
         }
-
 
     }
 }

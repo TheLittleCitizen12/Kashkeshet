@@ -1,38 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 
 namespace KashkeshetClient
 {
     class Menu
     {
+        
+        
         public Client client { get; set; }
         public UserData userData { get; set; }
 
-        public Menu(Client client1, UserData userData1)
+        public Dictionary<int, UserData> clientsConnected { get; set; }
+
+        
+        public Menu(Client client1, UserData userData1, Dictionary<int, UserData> clientsConnected1)
         {
             client = client1;
             userData = userData1;
+            clientsConnected = clientsConnected1;
         }
 
         public void MainMenu()
         {
+            
             while (true)
             {
                 Console.WriteLine("1. Broadcast Chat.");
                 Console.WriteLine("2. Private Chat.");
-                Console.WriteLine("3. Exit");
+                Console.WriteLine("3. Exit.");
                 int choice = UserInput();
 
                 switch (choice)
                 {
                     case 1:
                         userData.Input = 1;
-                        client.SendData(client.StartSession());
+                        client.StartSession();
                         break;
                     case 2:
                         userData.Input = 2;
-                        client.StartSession();
+
+                        //client.StartSession();
                         break;
                     case 3:
                         return;
@@ -58,5 +67,7 @@ namespace KashkeshetClient
             }
             return result;
         }
+
+        
     }
 }
