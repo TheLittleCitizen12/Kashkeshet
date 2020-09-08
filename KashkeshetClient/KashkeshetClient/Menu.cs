@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
+
 using System.Text;
 
 namespace KashkeshetClient
 {
     class Menu
     {
-        
-        
+
         public Client client { get; set; }
         public UserData userData { get; set; }
 
-
-
-        
         public Menu(Client client1, UserData userData1)
         {
             client = client1;
@@ -24,24 +20,24 @@ namespace KashkeshetClient
 
         public void MainMenu()
         {
-            
+
             while (true)
             {
                 Console.WriteLine("1. Broadcast Chat.");
                 Console.WriteLine("2. Private Chat.");
-                Console.WriteLine("3. Exit.");
+
+                Console.WriteLine("3. Exit");
                 int choice = UserInput();
 
                 switch (choice)
                 {
                     case 1:
                         userData.Input = 1;
-                        client.StartSession();
+                        client.SendData(client.StartSession());
                         break;
                     case 2:
                         userData.Input = 2;
-
-                        //client.StartSession();
+                        client.StartSession();
                         break;
                     case 3:
                         return;
@@ -67,7 +63,5 @@ namespace KashkeshetClient
             }
             return result;
         }
-
-        
     }
 }

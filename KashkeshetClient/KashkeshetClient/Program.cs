@@ -15,12 +15,10 @@ namespace KashkeshetClient
         {
 
             UserData userData = new UserData();
-            Client client = new Client();
+            Client client = new Client(userData);
             Menu menu = new Menu(client,userData);
             menu.MainMenu();
-            
-
-
+           
         }
         
     }
