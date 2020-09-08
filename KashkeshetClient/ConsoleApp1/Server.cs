@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KashkeshetClient;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
@@ -12,7 +13,8 @@ namespace KashkeshetServer
     class Server
     {
         static readonly object _lock = new object();
-        static readonly Dictionary<int, TcpClient> list_clients = new Dictionary<int, TcpClient>();
+        static readonly Dictionary<int, TcpClient> TcpClients = new Dictionary<int, TcpClient>();
+        static readonly Dictionary<string, Client> ClientsDetail = new Dictionary<string, Client>();
 
         public void StrartServer()
         {
@@ -24,7 +26,7 @@ namespace KashkeshetServer
             while (true)
             {
                 TcpClient client = ServerSocket.AcceptTcpClient();
-                lock (_lock) list_clients.Add(count, client);
+                lock (_lock) TcpClients.Add(count, client);
                 Console.WriteLine("Someone connected!!");
 
                 Thread t = new Thread(handle_clients);
@@ -39,7 +41,7 @@ namespace KashkeshetServer
             int id = (int)o;
             TcpClient client;
 
-            lock (_lock) client = list_clients[id];
+            lock (_lock) client = TcpClients[id];
 
             while (true)
             {
@@ -57,9 +59,10 @@ namespace KashkeshetServer
                 Console.WriteLine(data);
             }
 
-            lock (_lock) list_clients.Remove(id);
+            lock (_lock) TcpClients.Remove(id);
             client.Client.Shutdown(SocketShutdown.Both);
             client.Close();
+            
         }
 
         public static void broadcast(string data)
@@ -68,7 +71,7 @@ namespace KashkeshetServer
 
             lock (_lock)
             {
-                foreach (TcpClient c in list_clients.Values)
+                foreach (TcpClient c in TcpClients.Values)
                 {
                     NetworkStream stream = c.GetStream();
 

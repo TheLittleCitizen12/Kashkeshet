@@ -10,12 +10,16 @@ namespace KashkeshetClient
 {
     public class Client
     {
-        public string UserName { get; set; }
+        public UserData userData { get; set; }
+        public Client()
+        {
+            userData = new UserData();
+        }
 
         public void StartSession()
         {
             Console.Write("Please enter user name: ");
-            UserName = Console.ReadLine();
+            userData.Name = Console.ReadLine();
             IPAddress ip = IPAddress.Parse("10.1.0.20");
             int port = 11000;
             TcpClient client = new TcpClient();
@@ -29,7 +33,7 @@ namespace KashkeshetClient
             string Input;
             while (!string.IsNullOrEmpty(Input = UserInput()))
             {
-                byte[] buffer = Encoding.ASCII.GetBytes(UserName+": "+ Input);
+                byte[] buffer = Encoding.ASCII.GetBytes(userData.Name+": "+ Input);
                 ns.Write(buffer, 0, buffer.Length);
             }
 
@@ -37,7 +41,7 @@ namespace KashkeshetClient
             thread.Join();
             ns.Close();
             client.Close();
-            Console.WriteLine("disconnect from server!!");
+            Console.WriteLine(userData.Name + " disconnect from chat");
             Console.ReadKey();
 
         }
