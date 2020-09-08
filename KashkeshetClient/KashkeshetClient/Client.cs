@@ -13,26 +13,34 @@ namespace KashkeshetClient
     public class Client
     {
         public UserData userData { get; set; }
-        public Client()
+        public Client(UserData userData1)
         {
-            userData = new UserData();
+            userData = userData1 ;
         }
 
-        public void StartSession()
+        public TcpClient StartSession()
         {
             Console.Write("Please enter user name: ");
             userData.Name = Console.ReadLine();
-            IPAddress ip = IPAddress.Parse("10.1.0.20");
             int port = 11000;
-            TcpClient client = new TcpClient();
-            client.Connect(ip, port);
+            TcpClient client = new TcpClient("10.1.0.20", port);
             Console.WriteLine("Connected To Server, For Exit Please Press Enter");
-<<<<<<< HEAD
-=======
-
-            SendData(client);
+            Thread thread = new Thread(o => SendObject((TcpClient)o));
+            return client;
+            
            
->>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
+
+        }
+        public void SendObject(TcpClient client)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            NetworkStream strm = client.GetStream();
+            formatter.Serialize(strm, userData);
+            strm.Close();
+        }
+
+        public void SendData(TcpClient client)
+        {
 
             NetworkStream ns = client.GetStream();
             Thread thread = new Thread(o => ReceiveData((TcpClient)o));
@@ -78,7 +86,10 @@ namespace KashkeshetClient
 
             while ((byte_count = ns.Read(receivedBytes, 0, receivedBytes.Length)) > 0)
             {
+
                 Console.Write(Encoding.ASCII.GetString(receivedBytes, 0, byte_count));
+
+
             }
         }
 

@@ -8,9 +8,10 @@ namespace KashkeshetClient
     public class UserData
     {
         public string Name { get; set; }
-<<<<<<< HEAD
-=======
+
+        public int Input { get; set; }
+
         
->>>>>>> parent of efd43ff... Added Menu class in KashkeshatClient
+
     }
 }
