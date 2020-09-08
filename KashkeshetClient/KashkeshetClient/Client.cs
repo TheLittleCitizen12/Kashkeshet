@@ -14,12 +14,12 @@ namespace KashkeshetClient
     public class Client
     {
         public UserData userData { get; set; }
-        public Client()
+        public Client(UserData userData1)
         {
-            userData = new UserData();
+            userData = userData1 ;
         }
 
-        public void StartSession()
+        public TcpClient StartSession()
         {
             Console.Write("Please enter user name: ");
             userData.Name = Console.ReadLine();
@@ -27,8 +27,8 @@ namespace KashkeshetClient
             TcpClient client = new TcpClient("10.1.0.20",port);
             SendObject(userData, client);
             Console.WriteLine("Connected To Server, For Exit Please Press Enter");
-
-            SendData(client);
+            return client;
+            
            
 
         }

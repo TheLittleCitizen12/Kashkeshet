@@ -9,6 +9,7 @@ namespace KashkeshetClient
     public class UserData
     {
         public string Name { get; set; }
+        public int Input { get; set; }
         
     }
 }

@@ -10,8 +10,11 @@ namespace KashkeshetClient
     {
         static void Main(string[] args)
         {
-            Client client = new Client();
-            client.StartSession();
+            UserData userData = new UserData();
+            Client client = new Client(userData);
+            Menu menu = new Menu(client,userData);
+            menu.MainMenu();
+            
         }
         
     }

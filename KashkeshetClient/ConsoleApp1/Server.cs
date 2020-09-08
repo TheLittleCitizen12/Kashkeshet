@@ -16,9 +16,10 @@ namespace KashkeshetServer
     {
         static readonly object _lock = new object();
         static readonly Dictionary<int, TcpClient> TcpClients = new Dictionary<int, TcpClient>();
-        static readonly Dictionary<string, UserData> ClientsDetail = new Dictionary<string, UserData>();
+        static readonly Dictionary<int, UserData> ClientsDetail = new Dictionary<int, UserData>();
         public TcpClient client { get; set; }
         public int count { get; set; }
+        public UserData userDataRecived { get; set; }
 
         public Server()
         {
@@ -61,8 +62,8 @@ namespace KashkeshetServer
 
             NetworkStream strm = client.GetStream();
             IFormatter formatter = new BinaryFormatter();
-            UserData userDataRecived = (UserData)formatter.Deserialize(strm);
-            lock (_lock) ClientsDetail.Add(userDataRecived.Name, userDataRecived);
+            userDataRecived = (UserData)formatter.Deserialize(strm);
+            lock (_lock) ClientsDetail.Add(count, userDataRecived);
 
         }
 
@@ -85,14 +86,34 @@ namespace KashkeshetServer
                 }
 
                 string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
-                broadcast(data, client);
-                Console.WriteLine(data);
+                ChooseMetod(data,client);
+                
+                //Console.WriteLine(data);
             }
-
+            ChooseMetod(ClientsDetail[id].Name + " Leave the chat", client);
             lock (_lock) TcpClients.Remove(id);
             client.Client.Shutdown(SocketShutdown.Both);
             client.Close();
 
+        }
+        public void ChooseMetod(string data, TcpClient client)
+        {
+            if(userDataRecived.Input == 1)
+            {
+                broadcast(data, client);
+            }
+            else
+            {
+                ChooseClientForPrivateChat();
+            }
+        }
+        public void ChooseClientForPrivateChat()
+        {
+
+            foreach (var client in ClientsDetail)
+            {
+                Console.WriteLine("{key}.{value}",client.Key,client.Value.Name);
+            }
         }
 
         public void broadcast(string data, TcpClient client)
